@@ -130,10 +130,9 @@
     init();
 
     function draw() {
-    // 检测是否为 Safari 或 iOS 设备（手机通常都是 WebKit 核心）
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.platform);
+        // 检测浏览器类型
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.platform);
     
-    const text = document.getElementById('textInput').value.toUpperCase() || " ";
         const text = document.getElementById('textInput').value.toUpperCase() || " ";
         const hGap = parseInt(document.getElementById('hGap').value);
         const vGap = parseInt(document.getElementById('vGap').value);
@@ -146,26 +145,21 @@
         ctx.fillStyle = textColor;
         ctx.textBaseline = 'top';
 
-        // 1. 缩小 I 的字号：如果是 AT 字体，字号从 330 降为 260
         const iFontSize = isAT ? 260 : 300;
         ctx.font = `${iFontSize}px ${fontName}`;
         const iWidth = ctx.measureText('I').width;
         
-        // 2. 视觉高度比例优化
         const iVisualHeight = iFontSize * (isAT ? 0.65 : 0.72); 
         const heartH = iVisualHeight;
         const heartW = isImgLoaded ? (heartImg.width / heartImg.height) * heartH : heartH;
 
-        // 第一行总宽度
         const topRowWidth = iWidth + hGap + heartW;
         const startX = (canvas.width - topRowWidth) / 2;
         const startY = 320;
 
-        // 绘制 'I'
         ctx.textAlign = 'left';
         ctx.fillText('I', startX, startY);
 
-        // 绘制心形
         if (isImgLoaded) {
             const offscreen = document.createElement('canvas');
             offscreen.width = heartImg.width; 
@@ -176,29 +170,23 @@
             oCtx.fillStyle = heartColor;
             oCtx.fillRect(0, 0, offscreen.width, offscreen.height);
 
-            // 垂直对齐偏移量（你可以微调这里）
+            // 浏览器差异化偏移
             let yOff;
             if (isSafari) {
-                yOff = 0.3;  // 专门给 Safari / iOS 用的数值
+                yOff = 0.3;  
             } else {
-                yOff = 0.18; // 专门给 Chrome / Windows 用的数值
+                yOff = 0.18; 
             }
 
             ctx.drawImage(offscreen, startX + iWidth + hGap, startY + (iVisualHeight * yOff), heartW, heartH);
         }
-            ctx.drawImage(offscreen, startX + iWidth + hGap, startY + (iVisualHeight * yOff), heartW, heartH);
-        }
 
-        // 3. 绘制下方文字
         const bottomY = startY + iVisualHeight + vGap;
-        
-        // 目标宽度：基于第一行宽度 * 缩放比例 (1.0 ~ 1.3)
         const targetWidth = topRowWidth * widthScale;
         
         ctx.font = `100px ${fontName}`;
         const currentW = ctx.measureText(text).width;
         
-        // 自动计算下方字体的字号
         const targetSize = (targetWidth / (currentW || 1)) * 100;
         ctx.font = `${targetSize}px ${fontName}`;
         ctx.textAlign = 'center';
