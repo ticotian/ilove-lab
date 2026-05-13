@@ -130,6 +130,10 @@
     init();
 
     function draw() {
+    // 检测是否为 Safari 或 iOS 设备（手机通常都是 WebKit 核心）
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent) || /iPad|iPhone|iPod/.test(navigator.platform);
+    
+    const text = document.getElementById('textInput').value.toUpperCase() || " ";
         const text = document.getElementById('textInput').value.toUpperCase() || " ";
         const hGap = parseInt(document.getElementById('hGap').value);
         const vGap = parseInt(document.getElementById('vGap').value);
@@ -173,7 +177,15 @@
             oCtx.fillRect(0, 0, offscreen.width, offscreen.height);
 
             // 垂直对齐偏移量（你可以微调这里）
-            const yOff = isAT ? 0.15 : 0.06; 
+            let yOff;
+            if (isSafari) {
+                yOff = 0.3;  // 专门给 Safari / iOS 用的数值
+            } else {
+                yOff = 0.18; // 专门给 Chrome / Windows 用的数值
+            }
+
+            ctx.drawImage(offscreen, startX + iWidth + hGap, startY + (iVisualHeight * yOff), heartW, heartH);
+        }
             ctx.drawImage(offscreen, startX + iWidth + hGap, startY + (iVisualHeight * yOff), heartW, heartH);
         }
 
