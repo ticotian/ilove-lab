@@ -150,12 +150,12 @@
         const iWidth = ctx.measureText('I').width;
         
         const iVisualHeight = iFontSize * (isAT ? 0.65 : 0.72); 
-        const heartH = iVisualHeight;
+        const heartH = iVisualHeight * (isAT ? 1.0 : 0.9);
         const heartW = isImgLoaded ? (heartImg.width / heartImg.height) * heartH : heartH;
 
         const topRowWidth = iWidth + hGap + heartW;
         const startX = (canvas.width - topRowWidth) / 2;
-        const startY = 320;
+        const startY = 280;
 
         ctx.textAlign = 'left';
         ctx.fillText('I', startX, startY);
@@ -175,7 +175,7 @@
             if (isSafari) {
                 yOff = 0.3;  
             } else {
-                yOff = 0.18; 
+                yOff = isAT ? 0.18 : 0.12; 
             }
 
             ctx.drawImage(offscreen, startX + iWidth + hGap, startY + (iVisualHeight * yOff), heartW, heartH);
